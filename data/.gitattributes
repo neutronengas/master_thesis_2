@@ -1,0 +1,8 @@
+md_h2.npz filter=lfs diff=lfs merge=lfs -text
+*.npz filter=lfs diff=lfs merge=lfs -text
+md_h2_R_coords.npz filter=lfs diff=lfs merge=lfs -text
+md_h2_R_non_grid_coords.npz filter=lfs diff=lfs merge=lfs -text
+git filter=lfs diff=lfs merge=lfs -text
+add filter=lfs diff=lfs merge=lfs -text
+BOMD.md.energies filter=lfs diff=lfs merge=lfs -text
+BOMD.md.xyz filter=lfs diff=lfs merge=lfs -text

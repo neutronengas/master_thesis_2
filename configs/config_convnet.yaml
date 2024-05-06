@@ -1,0 +1,22 @@
+model_name: "convnet"
+
+num_train: 900
+num_valid: 180
+data_seed: 42
+dataset: "data/md_h2.npz"
+logdir: "./logging"
+
+num_steps: 10000
+ema_decay: 0.999
+
+learning_rate: 0.001
+warmup_steps: 3000
+decay_rate: 0.01
+decay_steps: 4000000
+
+batch_size: 30
+evaluation_interval: 100
+save_interval: 1
+restart: None
+comment: "final"
+target: ['corrs']

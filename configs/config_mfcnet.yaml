@@ -1,0 +1,29 @@
+model_name: "mfcnet"
+
+n_features: 10
+N_u: 30
+n_orb: 3
+n_ang_mom: 9
+r_cut: 5
+atoms: ['H', 'C', 'N', 'O']
+num_interaction_blocks: 1
+num_train: 200
+num_valid: 100
+data_seed: 42
+dataset: "../data/n2_data_preprocessed.npz"
+logdir: "../logging"
+
+num_steps: 10000
+ema_decay: 0.999
+
+learning_rate: 0.001
+warmup_steps: 3000
+decay_rate: 0.01
+decay_steps: 4000000
+
+batch_size: 20
+evaluation_interval: 100
+save_interval: 1
+restart: None
+comment: "final"
+target: ['1rdms_diff']
