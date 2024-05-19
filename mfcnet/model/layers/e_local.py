@@ -20,10 +20,11 @@ class ELocalLayer(layers.Layer):
     def call(self, inputs):
         # mo_features: (batch, mo, features, angular momentum), V_n: (batch, self.N_u, 20)
         # h1: (batch, n_h1), h1_idx: (batch, n_h1, 2), h2: (batch, n_h2), h2_idx: (batch, n_h2, 4)
-        mo_features, V_n, V_n_idx, h1, h1_idx, h2, h2_idx, gram = inputs
-        V_n_seg = tf.gather(V_n, V_n_idx)
+        mo_features, gram, V_n, V_n_idx, dets_as_idx, neighbour_dets_as_dec, neighbour_dets_matrix_el = inputs
+        
+        x_vec_as_dec = tf.gather(V_n, V_n_idx)
         #loc_energy, denom, top_N_u_states = calc_en_V_n(mo_features, V_n_seg, h1, h1_idx, h2, h2_idx, self.n_features, self.N_u, gram)
-        loc_energy, denom, top_N_u_states = e_local(N_u=self.Nu)
+        loc_energy, denom, top_N_u_states = e_local(self.Nu, x_vec_as_dec, dets_as_idx, neighbour_dets_as_dec, neighbour_dets_matrix_el, mo_features, gram)
 
         # TODO: validate this
         p = denom ** 2 / tf.reduce_sum(denom ** 2, axis=1)[:, None]

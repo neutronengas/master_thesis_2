@@ -31,7 +31,6 @@ class AtomMpnn(layers.Layer):
         ao_embeddings = inputs["ao_embeddings"]
         R = inputs["R"]
         C = inputs["C"]
-        Z = inputs["Z"]
         S = inputs["S"]
 
         # mo_features of shape (None, 10, 2, 5, features)
