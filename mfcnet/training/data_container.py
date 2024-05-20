@@ -13,12 +13,10 @@ class DataContainer:
         # 20 molecular orbitals, each consisting of 10 atomic orbitals
         self.cutoff = cutoff
         data_dict = np.load(filename, allow_pickle=True)
-        data_dict = data_dict["arr_0"].tolist()
 
         # keys: R_ao: (None, 20, 4, 3), C: (None, 20, 4, 5), mo_neighbours: (None, 20, 20),
         # h1: (None, ), h2: (None,), h1_idx: (None,), h2_idx: (None,), N_h1: (None,), N_h2: (None,)
         for key in list(data_dict.keys()):
-            print(key)
             setattr(self, key, np.array(data_dict[key]))
 
         self.id = np.arange(len(self.R))

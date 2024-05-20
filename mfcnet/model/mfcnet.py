@@ -12,17 +12,20 @@ from .layers.e_local import ELocalLayer
 from .activations import swish
 
 class MFCNet(tf.keras.Model):
-    def __init__(self, n_features, N_u, n_orb, n_ang_mom, num_interaction_blocks, atoms, activation=swish, output_init='zeros', name='dmnet', **kwargs):
+    def __init__(self, n_features, N_u, n_orb, k, n_mlp, l_max, n_ang_mom, num_interaction_blocks, activation=swish, output_init='zeros', name='dmnet', **kwargs):
         super().__init__(name=name, **kwargs)
         # hard-coded for cc-pvdz basis
         self.n_features = n_features
         self.N_u = N_u
         self.n_orb = n_orb
+        self.k = k
+        self.n_mlp = n_mlp
+        self.l_max = l_max
 
         self.embedding_block = EmbeddingLayer(n_orb=n_orb, n_features=n_features, activation=activation)
         self.int_layers = []
         for _ in range(num_interaction_blocks):
-            int_layer = InteractionLayer(n_features=n_features, n_orb=n_orb, n_ang_mom=n_ang_mom)
+            int_layer = InteractionLayer(n_features=n_features, n_orb=n_orb, n_ang_mom=n_ang_mom, lmax=self.l_max, n_mlp=self.n_mlp, k=self.k)
             self.int_layers.append(int_layer)
         self.output_layer = ELocalLayer(n_features=n_features, N_u=N_u)
 
