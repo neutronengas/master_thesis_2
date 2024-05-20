@@ -13,21 +13,25 @@ def calc_amplitude(x_vec_neighbours_idx, mo_features, gram, norb, cgc):
     return ampl
 
 
-def e_local(N_u, x_vec_as_dec, x_vec_as_idx, dets_as_idx, dets_as_dec, neighbour_dets_as_dec, neighbour_dets_matrix_el, mo_features, gram):
+def e_local(N_u, x_vec_as_dec, dets_as_idx, neighbour_dets_as_dec, neighbour_dets_matrix_el, mo_features, gram):
     # x_vec_as_dec (= x_vec): (N_u,); x_vec_as_idx: (N_u, nelec); dets_as_idx: (no_dets, nelec)
     # neighbour_dets_as_dec: (no_dets, no_neighbour_dets); neighbour_dets_matrix_el: (no_dets, no_neighbour_dets)
     norb = len(dets_as_idx[0])
+    x_vec_as_idx = tf.gather(dets_as_idx, x_vec_as_dec)
     x_vec_neighbours_dec = tf.gather(neighbour_dets_as_dec, x_vec_as_dec)
     x_vec_neighbours_idx = tf.gather(dets_as_idx, x_vec_neighbours_dec)
     ampls = calc_amplitude(x_vec_neighbours_idx, mo_features, gram, norb)
     # ampls of shape (V_n, no_neighbour_dets)
-    matr_els = tf.gather(neighbour_dets_matrix_el, x_vec_as_idx)
+    matr_els = tf.gather(neighbour_dets_matrix_el, x_vec_as_dec)
     denom = calc_amplitude(x_vec_as_idx, mo_features, gram, norb)
     e_loc = tf.reduce_sum(ampls * matr_els, axis=-1) / denom
     top_N_u_ampls_idx = tf.argsort(tf.reshape(ampls, [tf.shape(ampls)[0], tf.shape(ampls)[1] * tf.shape(ampls)[2]]))[:, -N_u:]
-    top_N_u_dets_as_idx = tf.gather(dets_as_idx, top_N_u_ampls_idx)
-    top_N_u_dets_as_dec = tf.gather(dets_as_dec, top_N_u_ampls_idx)
-    return e_loc, denom, top_N_u_dets_as_idx, top_N_u_dets_as_dec
+    x_vec_neighbours_dec = tf.reshape(x_vec_neighbours_dec, [tf.shape(ampls)[0], tf.shape(ampls)[1] * tf.shape(ampls)[2]])
+    batch_idx = tf.range(len(ampls))[:, None]
+    batch_idx = tf.repeat(batch_idx, repeats=len(x_vec_neighbours_dec[0]), axis=-1)
+    batch_idx = tf.stack([batch_idx, top_N_u_ampls_idx], axis=-1)
+    top_N_u_dets_as_dec = tf.gather_nd(x_vec_neighbours_dec, batch_idx)
+    return e_loc, denom, top_N_u_dets_as_dec
 
 def create_neighbour_states(mo_features, x_vec, h1, h1_idx, h2, h2_idx, n_features, N_u, gram):
     x_vec = tf.cast(x_vec, dtype=tf.int32)
